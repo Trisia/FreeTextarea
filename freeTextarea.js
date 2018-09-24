@@ -435,6 +435,7 @@ window.FreeTextarea = (function () {
         module.registerDom.addEventListener("mousemove", draggingMove);
         // mouse up start the dragging flag
         module.registerDom.addEventListener("mouseup", draggingUp);
+
         // // mouse out of the register element,end of create of textarea
         // module.registerDom.addEventListener("mouseout", function (e) {
         //     if (!module.isDragging) {
@@ -836,6 +837,54 @@ window.FreeTextarea = (function () {
             domObject.style[key + ''] = (cssObject[key] + '')
         });
     };
+
+    /**
+     * get offset coordinate of the whole page
+     * @param obj Dom Object
+     * @author form https://blog.csdn.net/nrlovestudy/article/details/51283351
+     * @returns {{x: number, y: number}}
+     */
+    function getElemPos(obj) {
+        var pos = {"top": 0, "left": 0};
+        if (obj.offsetParent) {
+            while (obj.offsetParent) {
+                pos.top += obj.offsetTop;
+                pos.left += obj.offsetLeft;
+                obj = obj.offsetParent;
+            }
+        } else if (obj.x) {
+            pos.left += obj.x;
+        } else if (obj.x) {
+            pos.top += obj.y;
+        }
+        return {x: pos.left, y: pos.top};
+    }
+
+    /**
+     * resize all exist textAreaNode position to keep they are
+     * @param ev
+     * @author Cliven
+     */
+    module.resizeAllNodePosition = function (ev) {
+        console.log(ev);
+
+        // get current register offset of the page
+        var pos = getElemPos(module.registerDom);
+        var offsetTop = pos.y,
+            offsetLeft = pos.x;
+        Object.keys(module.txtAreaMap).forEach(function (key) {
+            var node = module.txtAreaMap[key];
+            // get coordinate relative to the inside of the registered element
+            var relativeLeft = node.getRelativeX(),
+                relativeTop = node.getRelativeY();
+            // recalculate the offset of top and left,then set it
+            node.setLeft(offsetLeft + relativeLeft);
+            node.setTop(offsetTop + relativeTop)
+        });
+    };
+
+    // when the window resize then resize all exist textarea position
+   window.addEventListener("resize", module.resizeAllNodePosition);
 
     return module;
 })();

@@ -361,3 +361,8 @@ TextAreaNode
 设置文本框获取到焦点时触发的回调函数
 
 - `callback` {Function} 回调函数
+
+
+### `resizeAllNodePosition()`
+
+重新设置已经存在的所有的textarea的坐标以保持原有的位置，该函数是由内部调用。
